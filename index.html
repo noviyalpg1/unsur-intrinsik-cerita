@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Cerita: Belajar Unsur Intrinsik</title>
+    <!-- Google Fonts untuk tampilan ramah anak -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome untuk Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* =========================================
+           CSS VARIABLES & RESET
+           ========================================= */
+        :root {
+            --primary: #4A90E2;    /* Soft Blue */
+            --secondary: #50E3C2;  /* Soft Teal */
+            --accent: #F5A623;     /* Warm Yellow/Orange */
+            --danger: #FF6B6B;     /* Soft Red */
+            --success: #A3D977;    /* Soft Green */
+            --bg-color: #F4F9F9;   /* Very Light Gray/Blue */
+            --text-main: #333333;
+            --text-light: #777777;
+            --white: #FFFFFF;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow-hover: 0 8px 25px rgba(0,0,0,0.1);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden; /* Prevent body scroll, handled in layout */
+        }
+
+        /* =========================================
+           TYPOGRAPHY & UTILITIES
+           ========================================= */
+        h1, h2, h3 { color: var(--primary); font-weight: 700; }
+        p { line-height: 1.6; margin-bottom: 1rem; font-size: 1.1rem;}
+        
+        .text-center { text-align: center; }
+        .text-accent { color: var(--accent); }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .hidden { display: none !important; }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.5s ease forwards; }
+
+        /* =========================================
+           BUTTONS & INPUTS
+           ========================================= */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 12px 24px; border: none; border-radius: 50px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: var(--transition); text-decoration: none;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1); /* 3D effect for kids */
+        }
+        .btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.1); }
+        
+        .btn-primary { background-color: var(--primary); color: white; box-shadow: 0 4px 0 #357ABD; }
+        .btn-secondary { background-color: var(--secondary); color: white; box-shadow: 0 4px 0 #3CB398; }
+        .btn-accent { background-color: var(--accent); color: white; box-shadow: 0 4px 0 #D48815; }
+        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none;}
+        
+        input[type="text"] {
+            width: 100%; padding: 15px; border: 2px solid #E0E0E0;
+            border-radius: var(--radius); font-size: 1.1rem;
+            transition: var(--transition); outline: none;
+        }
+        input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.2); }
+
+        /* =========================================
+           LAYOUT: FULLSCREEN APP
+           ========================================= */
+        #app-container {
+            display: flex; height: 100vh; width: 100vw;
+            background-color: var(--bg-color);
+        }
+
+        /* SIDEBAR (Desktop) / BOTTOM NAV (Mobile) */
+        nav.app-nav {
+            background: var(--white); box-shadow: var(--shadow);
+            z-index: 10; display: flex;
+        }
+        
+        .nav-brand { padding: 20px; text-align: center; border-bottom: 2px solid var(--bg-color); }
+        .nav-brand i { font-size: 2rem; color: var(--accent); }
+        .nav-brand h2 { font-size: 1.2rem; margin-top: 10px; }
+
+        .nav-menu { flex: 1; display: flex; list-style: none; padding: 0; }
+        .nav-item { flex: 1; }
+        .nav-link {
+            display: flex; align-items: center; padding: 15px 20px;
+            color: var(--text-light); text-decoration: none; font-weight: 600;
+            transition: var(--transition); gap: 12px; cursor: pointer;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(74, 144, 226, 0.1); color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+        .nav-link i { font-size: 1.2rem; width: 24px; text-align: center; }
+
+        .nav-footer { padding: 20px; border-top: 2px solid var(--bg-color); }
+
+        /* MAIN CONTENT AREA */
+        main.app-content {
+            display: flex; flex-direction: column; /* Flex layout for sticky footer */
+            flex: 1; height: 100vh; overflow-y: auto; overflow-x: hidden;
+            position: relative; scroll-behavior: smooth;
+        }
+        
+        section.view-section { 
+            display: none; 
+            max-width: 900px; margin: 0 auto; padding: 30px; width: 100%;
+            flex: 1 0 auto; /* Allow section to expand and push footer down */
+        }
+        section.view-section.active { display: block; }
+
+        /* =========================================
+           COMPONENTS
+           ========================================= */
+        .card {
+            background: var(--white); border-radius: var(--radius);
+            padding: 25px; box-shadow: var(--shadow); margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+
+        /* Progress Bar */
+        .progress-wrapper { background: #E0E0E0; border-radius: 20px; height: 20px; width: 100%; overflow: hidden; margin: 10px 0; }
+        .progress-fill { background: var(--success); height: 100%; width: 0%; transition: width 0.8s ease; }
+
+        /* Dashboard Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .stat-card { text-align: center; background: linear-gradient(135deg, var(--primary), #6EB0F5); color: white; }
+        .stat-card.accent { background: linear-gradient(135deg, var(--accent), #FFC55A); }
+        .stat-card i { font-size: 2.5rem; margin-bottom: 10px; opacity: 0.8; }
+        .stat-card h3 { color: white; font-size: 2rem; margin: 0; }
+
+        /* Unsur Intrinsik Cards */
+        .unsur-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .unsur-card { border-top: 5px solid var(--primary); display: flex; flex-direction: column; justify-content: space-between;}
+        .unsur-icon { width: 60px; height: 60px; background: rgba(74, 144, 226, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 15px; }
+
+        /* Latihan Options */
+        .quiz-option {
+            display: block; width: 100%; text-align: left; padding: 15px 20px;
+            margin-bottom: 10px; background: var(--white); border: 2px solid #E0E0E0;
+            border-radius: var(--radius); font-size: 1.1rem; cursor: pointer;
+            transition: var(--transition);
+        }
+        .quiz-option:hover { border-color: var(--primary); background: rgba(74, 144, 226, 0.05); }
+        .quiz-option.correct { border-color: var(--success); background: rgba(163, 217, 119, 0.2); }
+        .quiz-option.wrong { border-color: var(--danger); background: rgba(255, 107, 107, 0.2); }
+
+        /* Drag & Drop / Match Game (Tap to Match alternative for mobile) */
+        .match-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-between;}
+        .match-col { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 10px; }
+        .match-item { padding: 15px; border: 2px solid #ccc; border-radius: 10px; text-align: center; cursor: pointer; background: white; transition: all 0.2s; }
+        .match-item.selected { border-color: var(--accent); background: rgba(245, 166, 35, 0.2); transform: scale(1.05); }
+        .match-item.matched { border-color: var(--success); background: var(--success); color: white; cursor: default; opacity: 0.7;}
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; visibility: hidden; transition: var(--transition);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: white; width: 90%; max-width: 600px; padding: 30px;
+            border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative; max-height: 80vh; overflow-y: auto; transform: scale(0.9);
+            transition: var(--transition);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--danger); cursor: pointer; }
+        
+        .story-text { font-size: 1.2rem; line-height: 1.8; margin-top: 15px; padding: 15px; background: var(--bg-color); border-radius: 10px; border-left: 5px solid var(--accent);}
+
+        /* Login Screen */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); width: 90%; max-width: 400px; text-align: center; }
+        .login-box img { width: 120px; margin-bottom: 20px; animation: bounce 2s infinite ease-in-out; }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* =========================================
+           FOOTER (Tailwind to Vanilla CSS)
+           ========================================= */
+        .app-footer {
+            background-color: #FFFFFF;
+            border-top: 1px solid #E2E8F0;
+            box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05);
+            margin-top: auto; /* Pushes footer to bottom */
+            width: 100%;
+            flex-shrink: 0;
+        }
+        .footer-container {
+            max-width: 1280px; margin: 0 auto; padding: 24px 16px;
+            display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;
+        }
+        @media (min-width: 640px) {
+            .footer-container { flex-direction: row; }
+        }
+        .footer-brand {
+            display: flex; align-items: center; gap: 8px; color: #1E293B;
+        }
+        .footer-logo {
+            width: 32px; height: 32px; background-color: #2563EB; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #FFFFFF; font-weight: 700; font-size: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+        .footer-title { font-weight: 800; font-size: 1.125rem; line-height: 1; margin: 0; }
+        .footer-copy { font-size: 0.75rem; color: #64748B; margin-top: 4px; margin-bottom: 0; }
+        .footer-socials { display: flex; align-items: center; gap: 16px; }
+        .social-btn {
+            width: 40px; height: 40px; border-radius: 50%; background-color: #F8FAFC;
+            display: flex; align-items: center; justify-content: center; color: #64748B;
+            border: 1px solid #E2E8F0; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+            transition: all 0.3s ease; text-decoration: none; font-size: 18px;
+        }
+        .social-btn.ig:hover { background-color: #FCE7F3; color: #DB2777; }
+        .social-btn.tt:hover { background-color: #DBEAFE; color: #3B82F6; }
+        .social-btn.fb:hover { background-color: #E0E7FF; color: #4F46E5; }
+        .social-btn.yt:hover { background-color: #FEE2E2; color: #DC2626; }
+
+        /* =========================================
+           RESPONSIVE DESIGN (Media Queries)
+           ========================================= */
+        /* Desktop / Tablet Landscape */
+        @media (min-width: 769px) {
+            nav.app-nav { width: 260px; flex-direction: column; height: 100vh; border-right: 1px solid #E0E0E0;}
+            .nav-menu { flex-direction: column; padding: 20px 0; }
+            .nav-link { border-left: 4px solid transparent; }
+        }
+
+        /* Mobile / Tablet Portrait */
+        @media (max-width: 768px) {
+            #app-container { flex-direction: column; }
+            nav.app-nav { order: 2; height: 70px; width: 100%; flex-direction: row; border-top: 1px solid #E0E0E0; position: fixed; bottom: 0; left: 0;}
+            .nav-brand { display: none; }
+            .nav-footer { display: none; }
+            .nav-menu { flex-direction: row; width: 100%; justify-content: space-around; align-items: center; }
+            .nav-link { flex-direction: column; padding: 10px; gap: 4px; font-size: 0.7rem; justify-content: center; text-align: center; border-left: none; border-bottom: 3px solid transparent;}
+            .nav-link i { font-size: 1.3rem; }
+            .nav-link:hover, .nav-link.active { border-left: none; border-bottom: 3px solid var(--primary); background: transparent; }
+            
+            main.app-content { 
+                order: 1; 
+                height: calc(100vh - 70px); /* Height excludes fixed mobile nav */
+            }
+            section.view-section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================
+         LOGIN SCREEN
+         ========================================= -->
+    <div id="login-screen">
+        <div class="login-box animate-fade">
+            <!-- Simple SVG Icon for Kids -->
+            <svg width="100" height="100" viewBox="0 0 100 100" style="margin: 0 auto 20px;">
+                <circle cx="50" cy="50" r="45" fill="#F5A623"/>
+                <path d="M30 60 Q50 80 70 60" stroke="white" stroke-width="6" fill="transparent" stroke-linecap="round"/>
+                <circle cx="35" cy="40" r="6" fill="white"/>
+                <circle cx="65" cy="40" r="6" fill="white"/>
+            </svg>
+            <h2 class="mb-2">Halo Sahabat!</h2>
+            <p class="mb-4 text-light">Yuk, masukkan namamu untuk memulai petualangan cerita.</p>
+            
+            <div class="mb-3">
+                <input type="text" id="input-name" placeholder="Nama Panggilanmu" required autocomplete="off">
+            </div>
+            <div class="mb-4">
+                <input type="text" id="input-school" placeholder="Asal Sekolah (SD)" required autocomplete="off">
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="app.login()">Mulai Petualangan <i class="fas fa-rocket"></i></button>
+        </div>
+    </div>
+
+    <!-- =========================================
+         MAIN APPLICATION
+         ========================================= -->
+    <div id="app-container" class="hidden">
+        
+        <!-- NAVIGATION -->
+        <nav class="app-nav">
+            <div class="nav-brand">
+                <i class="fas fa-book-open"></i>
+                <h2>Ruang Cerita</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a class="nav-link active" onclick="app.navigate('beranda')"><i class="fas fa-home"></i> <span>Beranda</span></a></li>
+                <li class="nav-item"><a class="nav-link" onclick="app.navigate('pengertian')"><i class="fas fa-lightbulb"></i> <span>Pengertian</span></a></li>
+                <li class="nav-item"><a class="nav-link" onclick="app.navigate('unsur')"><i class="fas fa-puzzle-piece"></i> <span>Unsur Cerita</span></a></li>
+                <li class="nav-item"><a class="nav-link" onclick="app.navigate('latihan')"><i class="fas fa-gamepad"></i> <span>Latihan</span></a></li>
+                <li class="nav-item"><a class="nav-link" onclick="app.navigate('refleksi')"><i class="fas fa-star"></i> <span>Refleksi</span></a></li>
+            </ul>
+            <div class="nav-footer">
+                <button class="btn btn-outline" style="width: 100%; font-size: 0.9rem;" onclick="app.toggleFullScreen()">
+                    <i class="fas fa-expand"></i> Layar Penuh
+                </button>
+            </div>
+        </nav>
+
+        <!-- CONTENT AREA -->
+        <main class="app-content">
+            
+            <!-- 1. BERANDA / DASHBOARD -->
+            <section id="view-beranda" class="view-section active animate-fade">
+                <div class="card mb-4" style="background: linear-gradient(120deg, var(--white), #f0f8ff);">
+                    <h1 class="mb-2">Halo, <span class="text-accent" id="display-name">Siswa</span>! 👋</h1>
+                    <p>Selamat datang di Petualangan Ruang Cerita. Kamu dari <strong id="display-school">Sekolah</strong> kan? Yuk kita belajar tentang unsur intrinsik cerita agar kamu bisa jadi pencerita yang hebat!</p>
+                </div>
+
+                <div class="card mb-4">
+                    <h3>Progress Belajarmu</h3>
+                    <div class="progress-wrapper">
+                        <div class="progress-fill" id="progress-bar" style="width: 0%;"></div>
+                    </div>
+                    <p class="text-right text-light mb-0" style="font-size: 0.9rem;"><span id="progress-text">0</span>% Selesai</p>
+                </div>
+
+                <div class="stats-grid mb-4">
+                    <div class="card stat-card">
+                        <i class="fas fa-medal"></i>
+                        <h3 id="stat-score">0</h3>
+                        <p class="mb-0">Skor Latihan</p>
+                    </div>
+                    <div class="card stat-card accent">
+                        <i class="fas fa-check-circle"></i>
+                        <h3 id="stat-completed">0/4</h3>
+                        <p class="mb-0">Misi Selesai</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button class="btn btn-primary btn-lg" onclick="app.navigate('pengertian')">Mulai Belajar <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </section>
+
+            <!-- 2. PENGERTIAN -->
+            <section id="view-pengertian" class="view-section animate-fade">
+                <h1 class="mb-4"><i class="fas fa-lightbulb text-accent"></i> Apa itu Cerita?</h1>
+                
+                <div class="card mb-4">
+                    <div class="text-center mb-3">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='20' y='20' width='60' height='60' fill='%234A90E2' rx='10'/><path d='M30 40 h40 M30 55 h40 M30 70 h20' stroke='white' stroke-width='5' stroke-linecap='round'/></svg>" alt="Buku" style="width: 100px;">
+                    </div>
+                    <p><strong>Cerita</strong> adalah karangan yang menuturkan perbuatan, pengalaman, atau kejadian. Bisa berupa kisah nyata atau sekadar khayalan (dongeng).</p>
+                    <p>Pernahkah kamu membaca buku dongeng Si Kancil? Atau menonton film kartun? Nah, itu semua adalah cerita!</p>
+                </div>
+
+                <div class="card mb-4">
+                    <h3 class="mb-2">Unsur Intrinsik</h3>
+                    <p>Agar cerita menjadi seru dan bisa dipahami, ada yang namanya <strong>Unsur Intrinsik</strong>. Ini adalah "bahan-bahan" pembuat cerita dari dalam cerita itu sendiri.</p>
+                    <p>Ibarat membuat kue, unsur intrinsik adalah tepung, telur, dan gulanya. Jika salah satu tidak ada, ceritanya jadi kurang enak dinikmati.</p>
+                    
+                    <button class="btn btn-secondary mt-3" onclick="app.markProgress('pengertian'); app.navigate('unsur')">Lanjut ke Unsur Cerita <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </section>
+
+            <!-- 3. UNSUR INTRINSIK -->
+            <section id="view-unsur" class="view-section animate-fade">
+                <h1 class="mb-4"><i class="fas fa-puzzle-piece text-primary"></i> 3 Unsur Penting Cerita</h1>
+                <p class="mb-4">Mari kita pelajari 3 unsur pembangun cerita: Tokoh, Latar, dan Alur.</p>
+
+                <div class="unsur-grid">
+                    <!-- Tokoh -->
+                    <div class="card unsur-card">
+                        <div>
+                            <div class="unsur-icon"><i class="fas fa-user-friends"></i></div>
+                            <h3 class="text-center mb-2">Tokoh (Karakter)</h3>
+                            <p class="text-center text-light" style="font-size: 0.95rem;">Pelaku yang ada di dalam cerita.</p>
+                            <p style="font-size: 0.95rem;">Tokoh bisa berupa manusia, hewan, atau benda yang seolah-olah hidup. Ada tokoh baik (Protagonis) dan tokoh jahat (Antagonis).</p>
+                        </div>
+                        <button class="btn btn-outline mt-3" style="width: 100%;" onclick="app.openStory('tokoh')"><i class="fas fa-book-reader"></i> Baca Contoh</button>
+                    </div>
+
+                    <!-- Latar -->
+                    <div class="card unsur-card">
+                        <div>
+                            <div class="unsur-icon"><i class="fas fa-map-marked-alt"></i></div>
+                            <h3 class="text-center mb-2">Latar (Setting)</h3>
+                            <p class="text-center text-light" style="font-size: 0.95rem;">Keterangan tempat, waktu, & suasana.</p>
+                            <p style="font-size: 0.95rem;">Latar menjawab pertanyaan: <em>Di mana cerita terjadi? Kapan? Dan bagaimana suasananya?</em></p>
+                        </div>
+                        <button class="btn btn-outline mt-3" style="width: 100%;" onclick="app.openStory('latar')"><i class="fas fa-book-reader"></i> Baca Contoh</button>
+                    </div>
+
+                    <!-- Alur -->
+                    <div class="card unsur-card">
+                        <div>
+                            <div class="unsur-icon"><i class="fas fa-route"></i></div>
+                            <h3 class="text-center mb-2">Alur (Plot)</h3>
+                            <p class="text-center text-light" style="font-size: 0.95rem;">Jalan cerita dari awal sampai akhir.</p>
+                            <p style="font-size: 0.95rem;">Alur berisi rentetan peristiwa. Mulai dari perkenalan, munculnya masalah, hingga penyelesaian masalah.</p>
+                        </div>
+                        <button class="btn btn-outline mt-3" style="width: 100%;" onclick="app.openStory('alur')"><i class="fas fa-book-reader"></i> Baca Contoh</button>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-secondary" onclick="app.markProgress('unsur'); app.navigate('latihan')">Ayo Berlatih! <i class="fas fa-gamepad"></i></button>
+                </div>
+            </section>
+
+            <!-- 4. LATIHAN INTERAKTIF -->
+            <section id="view-latihan" class="view-section animate-fade">
+                <h1 class="mb-4"><i class="fas fa-gamepad text-success"></i> Zona Latihan</h1>
+                
+                <!-- Intro Latihan -->
+                <div id="quiz-intro" class="card text-center">
+                    <h3>Uji Pengetahuanmu!</h3>
+                    <p>Ada 4 pertanyaan seru menantimu. Jawab dengan hati-hati ya!</p>
+                    <button class="btn btn-accent mt-3" onclick="quizApp.startQuiz()">Mulai Kuis <i class="fas fa-play"></i></button>
+                </div>
+
+                <!-- Area Kuis (Dinamis via JS) -->
+                <div id="quiz-area" class="card hidden">
+                    <div class="d-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <span class="text-light font-weight-bold" id="quiz-progress-text">Soal 1 dari 4</span>
+                        <span class="text-accent" id="quiz-level-badge" style="font-weight:bold; background: rgba(245,166,35,0.2); padding: 5px 10px; border-radius: 20px;">Mudah</span>
+                    </div>
+                    
+                    <h3 id="quiz-question" class="mb-4">Pertanyaan akan muncul di sini?</h3>
+                    
+                    <!-- Container Pilihan Ganda / Benar Salah -->
+                    <div id="quiz-options-container"></div>
+
+                    <!-- Container Mencocokkan (Tap to Match) -->
+                    <div id="quiz-match-container" class="match-container hidden">
+                        <div class="match-col" id="match-left"></div>
+                        <div class="match-col" id="match-right"></div>
+                    </div>
+
+                    <div class="text-center mt-4 hidden" id="quiz-next-btn-container">
+                        <button class="btn btn-primary" onclick="quizApp.nextQuestion()">Lanjut <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Hasil Kuis -->
+                <div id="quiz-result" class="card text-center hidden">
+                    <div id="result-icon" style="font-size: 4rem; color: var(--accent); margin-bottom: 10px;"><i class="fas fa-trophy"></i></div>
+                    <h2 class="mb-2">Kerja Bagus!</h2>
+                    <p>Skor kamu:</p>
+                    <h1 style="font-size: 3rem; color: var(--primary);" id="result-score">100</h1>
+                    <p id="result-message" class="mb-4">Hebat! Kamu sudah paham materi ini.</p>
+                    <button class="btn btn-secondary" onclick="app.markProgress('latihan'); app.navigate('refleksi')">Ke Menu Refleksi <i class="fas fa-star"></i></button>
+                    <button class="btn btn-outline" style="margin-top:10px;" onclick="quizApp.startQuiz()">Ulangi Kuis <i class="fas fa-redo"></i></button>
+                </div>
+            </section>
+
+            <!-- 5. REFLEKSI -->
+            <section id="view-refleksi" class="view-section animate-fade">
+                <h1 class="mb-4"><i class="fas fa-star text-accent"></i> Refleksi Hari Ini</h1>
+                
+                <div class="card">
+                    <p>Setelah belajar dan bermain hari ini, yuk ceritakan pengalamanmu!</p>
+                    
+                    <label class="mb-1" style="display:block; font-weight:bold;">1. Apa yang paling kamu ingat dari pelajaran hari ini?</label>
+                    <textarea id="ref-1" rows="3" style="width:100%; padding:10px; border-radius:10px; border:2px solid #ddd; margin-bottom:20px; font-family:inherit; font-size:1rem;" placeholder="Tulis jawabanmu di sini..."></textarea>
+                    
+                    <label class="mb-1" style="display:block; font-weight:bold;">2. Bagian mana yang paling kamu suka?</label>
+                    <div style="display:flex; gap:10px; margin-bottom:20px;">
+                        <button class="btn btn-outline ref-btn" onclick="app.setRefLike(this, 'Cerita')">Cerita</button>
+                        <button class="btn btn-outline ref-btn" onclick="app.setRefLike(this, 'Latihan')">Latihan</button>
+                        <button class="btn btn-outline ref-btn" onclick="app.setRefLike(this, 'Suara')">Fitur Suara</button>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="app.saveReflection()">Simpan Jurnal <i class="fas fa-save"></i></button>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 FOOTER STUDIOLPG
+                 ========================================= -->
+            <footer class="app-footer">
+                <div class="footer-container">
+                    <div class="footer-brand">
+                        <div class="footer-logo">S</div>
+                        <div>
+                            <p class="footer-title">Studiolpg</p>
+                            <p class="footer-copy">&copy; 2026 Noviyalpg creative - Media Pembelajaran Interaktif</p>
+                        </div>
+                    </div>
+
+                    <div class="footer-socials">
+                        <a href="https://s.id/ig-noviyalpg" target="_blank" class="social-btn ig" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@noviya.lpg?_t=ZS-8tafgg6Eeyl&_r=1" target="_blank" class="social-btn tt" title="TikTok">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="https://www.facebook.com/noviyalpg/" target="_blank" class="social-btn fb" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://s.id/youtube-noviyalpg" target="_blank" class="social-btn yt" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- =========================================
+         MODALS & OVERLAYS
+         ========================================= -->
+    <!-- Story Modal -->
+    <div class="modal-overlay" id="story-modal">
+        <div class="modal-content">
+            <i class="fas fa-times modal-close" onclick="app.closeModal()"></i>
+            <h2 id="modal-title" class="mb-2 text-primary">Judul</h2>
+            <p id="modal-desc" class="text-light" style="font-size: 0.9rem;">Deskripsi</p>
+            
+            <div class="d-flex" style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn btn-accent" style="padding: 8px 15px; font-size: 0.9rem;" onclick="app.readAloud()">
+                    <i class="fas fa-volume-up"></i> Dengarkan Cerita
+                </button>
+                <button class="btn btn-outline hidden" id="btn-stop-audio" style="padding: 8px 15px; font-size: 0.9rem;" onclick="app.stopAudio()">
+                    <i class="fas fa-stop"></i> Henti
+                </button>
+            </div>
+
+            <div class="story-text" id="modal-story">
+                Teks cerita akan muncul di sini.
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" style="position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 10px 20px; border-radius: 30px; z-index: 3000; transition: all 0.5s; font-weight: bold; box-shadow: var(--shadow);">
+        Pesan berhasil!
+    </div>
+
+
+    <!-- =========================================
+         JAVASCRIPT LOGIC
+         ========================================= -->
+    <script>
+        /**
+         * AUDIO SYSTEM (Web Audio API for basic sounds to avoid external dependencies)
+         */
+        const audioSys = {
+            ctx: null,
+            init: function() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            playCorrect: function() {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.2); // G5
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.5);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.5);
+            },
+            playWrong: function() {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                osc.frequency.setValueAtTime(250, this.ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.3);
+            }
+        };
+
+        /**
+         * SPEECH SYNTHESIS (Web Speech API)
+         */
+        const speechSys = {
+            synth: window.speechSynthesis,
+            speak: function(text) {
+                this.stop();
+                if (text !== '') {
+                    const utterThis = new SpeechSynthesisUtterance(text);
+                    utterThis.lang = 'id-ID'; // Bahasa Indonesia
+                    utterThis.rate = 0.85;    // Sedikit pelan agar ramah anak
+                    utterThis.pitch = 1.1;    // Sedikit tinggi
+                    
+                    utterThis.onend = function() {
+                        document.getElementById('btn-stop-audio').classList.add('hidden');
+                    }
+                    this.synth.speak(utterThis);
+                    document.getElementById('btn-stop-audio').classList.remove('hidden');
+                }
+            },
+            stop: function() {
+                if (this.synth.speaking) {
+                    this.synth.cancel();
+                    document.getElementById('btn-stop-audio').classList.add('hidden');
+                }
+            }
+        };
+
+        /**
+         * DATA CERITA UNTUK MODAL
+         */
+        const storyData = {
+            tokoh: {
+                title: "Contoh: Tokoh Cerita",
+                desc: "Perhatikan siapa saja yang menjadi pelaku dalam cerita di bawah ini.",
+                text: "Di sebuah hutan, hiduplah seekor Kancil yang cerdik dan seekor Buaya yang serakah. Kancil selalu mencari cara untuk bisa menyeberangi sungai tanpa dimakan oleh Buaya. Buaya selalu menipu hewan lain agar bisa memakannya."
+            },
+            latar: {
+                title: "Contoh: Latar Cerita",
+                desc: "Perhatikan tempat, waktu, dan suasana pada cerita ini.",
+                text: "Pada pagi hari yang sangat cerah, di tepi sungai yang airnya mengalir deras dan jernih, suasana terasa sangat sejuk. Terdengar kicauan burung yang sangat riang dari atas dahan pohon beringin."
+            },
+            alur: {
+                title: "Contoh: Alur Cerita",
+                desc: "Perhatikan urutan kejadian (awal, masalah, akhir).",
+                text: "Suatu hari, Kura-kura ditantang berlari oleh Kelinci yang sombong (Awal). Kelinci berlari sangat cepat lalu tertidur di bawah pohon karena meremehkan Kura-kura (Masalah). Kura-kura terus berjalan tanpa henti, dan akhirnya melewati Kelinci yang tertidur lelap, lalu memenangkan perlombaan (Akhir)."
+            }
+        };
+
+        /**
+         * MAIN APP CLASS
+         */
+        const app = {
+            state: {
+                name: '',
+                school: '',
+                progress: { pengertian: false, unsur: false, latihan: false, refleksi: false },
+                score: 0,
+                liked: ''
+            },
+            
+            init: function() {
+                // Check localStorage
+                const saved = localStorage.getItem('petualanganCeritaData');
+                if (saved) {
+                    this.state = JSON.parse(saved);
+                    document.getElementById('input-name').value = this.state.name;
+                    document.getElementById('input-school').value = this.state.school;
+                }
+                
+                // Event listener for enter key in login
+                document.getElementById('input-school').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') app.login();
+                });
+            },
+
+            login: function() {
+                const name = document.getElementById('input-name').value.trim();
+                const school = document.getElementById('input-school').value.trim();
+                
+                if (name === '' || school === '') {
+                    this.showToast('Tulis nama dan sekolahmu dulu ya!', 'var(--danger)');
+                    return;
+                }
+
+                // Audio Context Init requires user interaction
+                audioSys.init();
+
+                this.state.name = name;
+                this.state.school = school;
+                this.saveData();
+                this.updateDashboard();
+
+                // Transition UI
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+            },
+
+            saveData: function() {
+                localStorage.setItem('petualanganCeritaData', JSON.stringify(this.state));
+                this.updateDashboard();
+            },
+
+            navigate: function(viewId) {
+                // Stop audio if navigating away
+                speechSys.stop();
+
+                // Hide all views
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                // Remove active class from navs
+                document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                
+                // Show selected view
+                document.getElementById('view-' + viewId).classList.add('active');
+                
+                // Update nav styling
+                const links = document.querySelectorAll('.nav-link');
+                links.forEach(link => {
+                    if(link.getAttribute('onclick').includes(viewId)) {
+                        link.classList.add('active');
+                    }
+                });
+
+                // Scroll to top of content area
+                document.querySelector('.app-content').scrollTo(0,0);
+            },
+
+            updateDashboard: function() {
+                document.getElementById('display-name').textContent = this.state.name;
+                document.getElementById('display-school').textContent = this.state.school;
+                
+                let completed = 0;
+                if(this.state.progress.pengertian) completed++;
+                if(this.state.progress.unsur) completed++;
+                if(this.state.progress.latihan) completed++;
+                if(this.state.progress.refleksi) completed++;
+                
+                const percentage = (completed / 4) * 100;
+                
+                document.getElementById('progress-bar').style.width = percentage + '%';
+                document.getElementById('progress-text').textContent = percentage;
+                document.getElementById('stat-completed').textContent = completed + '/4';
+                document.getElementById('stat-score').textContent = this.state.score;
+            },
+
+            markProgress: function(section) {
+                if (!this.state.progress[section]) {
+                    this.state.progress[section] = true;
+                    this.saveData();
+                    if(section !== 'latihan') { 
+                        audioSys.playCorrect(); 
+                        this.showToast('Hore! Progress belajar bertambah 25%');
+                    }
+                }
+            },
+
+            // Modal & Story Functions
+            openStory: function(type) {
+                const data = storyData[type];
+                document.getElementById('modal-title').textContent = data.title;
+                document.getElementById('modal-desc').textContent = data.desc;
+                document.getElementById('modal-story').textContent = data.text;
+                
+                this.currentStoryText = data.text;
+                document.getElementById('story-modal').classList.add('active');
+            },
+
+            closeModal: function() {
+                document.getElementById('story-modal').classList.remove('active');
+                this.stopAudio();
+            },
+
+            readAloud: function() {
+                speechSys.speak(this.currentStoryText);
+            },
+
+            stopAudio: function() {
+                speechSys.stop();
+            },
+
+            // Reflection Functions
+            setRefLike: function(btnElement, type) {
+                document.querySelectorAll('.ref-btn').forEach(btn => {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline');
+                });
+                btnElement.classList.remove('btn-outline');
+                btnElement.classList.add('btn-primary');
+                this.state.liked = type;
+            },
+
+            saveReflection: function() {
+                const text = document.getElementById('ref-1').value;
+                if(text.trim() === '' || this.state.liked === '') {
+                    this.showToast('Isi cerita dan pilih bagian yang kamu suka ya!', 'var(--danger)');
+                    return;
+                }
+                this.markProgress('refleksi');
+                this.showToast('Jurnal berhasil disimpan! Kamu Hebat!', 'var(--success)');
+            },
+
+            showToast: function(msg, color = 'var(--success)') {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.style.background = color;
+                toast.style.bottom = '20px';
+                setTimeout(() => { toast.style.bottom = '-100px'; }, 3000);
+            },
+
+            toggleFullScreen: function() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    });
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            }
+        };
+
+        /**
+         * QUIZ SYSTEM (Latihan)
+         */
+        const quizApp = {
+            questions: [
+                {
+                    type: 'pg',
+                    level: 'Mudah',
+                    q: 'Siapa yang menjadi pelaku dalam sebuah cerita?',
+                    options: ['Latar', 'Alur', 'Tokoh', 'Tema'],
+                    answer: 2
+                },
+                {
+                    type: 'tf', 
+                    level: 'Sedang',
+                    q: 'Benar atau Salah: Latar adalah jalan cerita dari awal sampai akhir.',
+                    options: ['Benar', 'Salah'],
+                    answer: 1 
+                },
+                {
+                    type: 'pg',
+                    level: 'Sedang',
+                    q: '"Pada zaman dahulu di sebuah hutan yang lebat..." Kalimat ini menunjukkan unsur apa?',
+                    options: ['Tokoh', 'Latar Tempat & Waktu', 'Alur Cerita', 'Sifat Tokoh'],
+                    answer: 1
+                },
+                {
+                    type: 'match',
+                    level: 'Sulit',
+                    q: 'Pasangkan kata di sebelah kiri dengan artinya di sebelah kanan!',
+                    pairs: [
+                        { left: 'Protagonis', right: 'Tokoh Baik', id: 1 },
+                        { left: 'Antagonis', right: 'Tokoh Jahat', id: 2 },
+                        { left: 'Latar', right: 'Tempat/Waktu', id: 3 }
+                    ]
+                }
+            ],
+            currentQIndex: 0,
+            score: 0,
+            isAnswered: false,
+            matchState: { leftSelected: null, rightSelected: null, matchedCount: 0 },
+
+            startQuiz: function() {
+                this.currentQIndex = 0;
+                this.score = 0;
+                document.getElementById('quiz-intro').classList.add('hidden');
+                document.getElementById('quiz-result').classList.add('hidden');
+                document.getElementById('quiz-area').classList.remove('hidden');
+                this.renderQuestion();
+            },
+
+            renderQuestion: function() {
+                this.isAnswered = false;
+                const qData = this.questions[this.currentQIndex];
+                
+                document.getElementById('quiz-progress-text').textContent = `Soal ${this.currentQIndex + 1} dari ${this.questions.length}`;
+                
+                const badge = document.getElementById('quiz-level-badge');
+                badge.textContent = qData.level;
+                if(qData.level === 'Mudah') badge.style.color = '#A3D977';
+                else if(qData.level === 'Sedang') badge.style.color = '#F5A623';
+                else badge.style.color = '#FF6B6B';
+
+                document.getElementById('quiz-question').textContent = qData.q;
+                
+                const optContainer = document.getElementById('quiz-options-container');
+                const matchContainer = document.getElementById('quiz-match-container');
+                const nextBtn = document.getElementById('quiz-next-btn-container');
+                
+                optContainer.innerHTML = '';
+                nextBtn.classList.add('hidden');
+
+                if (qData.type === 'pg' || qData.type === 'tf') {
+                    optContainer.classList.remove('hidden');
+                    matchContainer.classList.add('hidden');
+                    
+                    qData.options.forEach((opt, index) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'quiz-option';
+                        btn.textContent = opt;
+                        btn.onclick = () => this.handleAnswer(index, btn);
+                        optContainer.appendChild(btn);
+                    });
+                } else if (qData.type === 'match') {
+                    optContainer.classList.remove('hidden');
+                    matchContainer.classList.remove('hidden');
+                    this.renderMatchGame(qData.pairs);
+                }
+            },
+
+            handleAnswer: function(selectedIndex, btnElement) {
+                if (this.isAnswered) return;
+                this.isAnswered = true;
+                
+                const qData = this.questions[this.currentQIndex];
+                const isCorrect = selectedIndex === qData.answer;
+                const options = document.querySelectorAll('.quiz-option');
+                
+                if (isCorrect) {
+                    btnElement.classList.add('correct');
+                    this.score += 25;
+                    audioSys.playCorrect();
+                    app.showToast('Jawaban Tepat!', 'var(--success)');
+                } else {
+                    btnElement.classList.add('wrong');
+                    options[qData.answer].classList.add('correct');
+                    audioSys.playWrong();
+                    app.showToast('Kurang tepat, yuk belajar lagi!', 'var(--danger)');
+                }
+
+                document.getElementById('quiz-next-btn-container').classList.remove('hidden');
+            },
+
+            renderMatchGame: function(pairs) {
+                this.matchState = { leftSelected: null, rightSelected: null, matchedCount: 0 };
+                const leftContainer = document.getElementById('match-left');
+                const rightContainer = document.getElementById('match-right');
+                leftContainer.innerHTML = ''; rightContainer.innerHTML = '';
+
+                const leftItems = [...pairs].sort(() => Math.random() - 0.5);
+                const rightItems = [...pairs].sort(() => Math.random() - 0.5);
+
+                leftItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'match-item';
+                    div.textContent = item.left;
+                    div.onclick = () => this.selectMatch('left', div, item.id);
+                    leftContainer.appendChild(div);
+                });
+
+                rightItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'match-item';
+                    div.textContent = item.right;
+                    div.onclick = () => this.selectMatch('right', div, item.id);
+                    rightContainer.appendChild(div);
+                });
+            },
+
+            selectMatch: function(side, el, id) {
+                if (el.classList.contains('matched')) return;
+
+                const container = document.getElementById(`match-${side}`);
+                container.querySelectorAll('.match-item').forEach(item => {
+                    if(!item.classList.contains('matched')) item.classList.remove('selected');
+                });
+                el.classList.add('selected');
+
+                if (side === 'left') {
+                    this.matchState.leftSelected = { el, id };
+                } else {
+                    this.matchState.rightSelected = { el, id };
+                }
+
+                if (this.matchState.leftSelected && this.matchState.rightSelected) {
+                    if (this.matchState.leftSelected.id === this.matchState.rightSelected.id) {
+                        audioSys.playCorrect();
+                        this.matchState.leftSelected.el.classList.add('matched');
+                        this.matchState.leftSelected.el.classList.remove('selected');
+                        this.matchState.rightSelected.el.classList.add('matched');
+                        this.matchState.rightSelected.el.classList.remove('selected');
+                        this.matchState.matchedCount++;
+                        
+                        this.matchState.leftSelected = null;
+                        this.matchState.rightSelected = null;
+
+                        if (this.matchState.matchedCount === 3) {
+                            this.score += 25;
+                            document.getElementById('quiz-next-btn-container').classList.remove('hidden');
+                            app.showToast('Luar Biasa! Semua cocok!', 'var(--success)');
+                        }
+                    } else {
+                        audioSys.playWrong();
+                        this.matchState.leftSelected.el.classList.add('wrong');
+                        this.matchState.rightSelected.el.classList.add('wrong');
+                        
+                        setTimeout(() => {
+                            if(this.matchState.leftSelected) {
+                                this.matchState.leftSelected.el.classList.remove('wrong', 'selected');
+                                this.matchState.leftSelected = null;
+                            }
+                            if(this.matchState.rightSelected) {
+                                this.matchState.rightSelected.el.classList.remove('wrong', 'selected');
+                                this.matchState.rightSelected = null;
+                            }
+                        }, 800);
+                    }
+                }
+            },
+
+            nextQuestion: function() {
+                this.currentQIndex++;
+                if (this.currentQIndex < this.questions.length) {
+                    this.renderQuestion();
+                } else {
+                    this.showResult();
+                }
+            },
+
+            showResult: function() {
+                document.getElementById('quiz-area').classList.add('hidden');
+                document.getElementById('quiz-result').classList.remove('hidden');
+                
+                document.getElementById('result-score').textContent = this.score;
+                const msg = document.getElementById('result-message');
+                const icon = document.getElementById('result-icon');
+                
+                if (this.score === 100) {
+                    msg.textContent = "Sempurna! Kamu pantas jadi Penulis Hebat!";
+                    icon.innerHTML = '<i class="fas fa-crown"></i>';
+                } else if (this.score >= 50) {
+                    msg.textContent = "Bagus sekali! Sedikit lagi mencapai sempurna.";
+                    icon.innerHTML = '<i class="fas fa-medal"></i>';
+                } else {
+                    msg.textContent = "Jangan menyerah, ayo baca lagi materinya dan coba lagi!";
+                    icon.innerHTML = '<i class="fas fa-thumbs-up"></i>';
+                }
+
+                if (this.score > app.state.score) {
+                    app.state.score = this.score;
+                }
+                app.markProgress('latihan'); 
+            }
+        };
+
+        // Initialize App on Load
+        window.onload = () => {
+            app.init();
+        };
+
+    </script>
+</body>
+</html>
